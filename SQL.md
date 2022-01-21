@@ -5,5 +5,5 @@
 
 ```sql
 CREATE USER 'username'@'localhost' 
-GRANT ALL PRIV
+GRANT ALL PRIVILAGES
 ```
