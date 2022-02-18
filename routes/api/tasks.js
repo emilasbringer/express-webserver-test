@@ -1,7 +1,7 @@
 const express = require('express');
 const res = require('express/lib/response');
 const router = express.Router();
-const pool = require('../database');
+const pool = require('../../database');
 /* 
     BASE URL /tasks
     GET / - Get all tasks
