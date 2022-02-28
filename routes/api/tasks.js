@@ -1,5 +1,4 @@
 const express = require('express');
-const res = require('express/lib/response');
 const router = express.Router();
 const pool = require('../../database');
 /* 
@@ -10,8 +9,6 @@ const pool = require('../../database');
     PUT /:id - Update a task by id
     DELETE /:id - Delete a task by id
 */
-
-//Get all
 router.get('/', async (req, res, next) => {
     await pool.promise()
         .query('SELECT * FROM tasks')
@@ -32,7 +29,6 @@ router.get('/', async (req, res, next) => {
         });
 });
 
-//Get id
 router.get('/:id', async (req, res, next) => {
     const id = req.params.id;
     if (isNaN(req.params.id)) {
@@ -43,7 +39,7 @@ router.get('/:id', async (req, res, next) => {
         });
     }
     await pool.promise()
-        .query("SELECT * FROM tasks WHERE id = ?", [id])
+        .query('SELECT * FROM tasks WHERE id = ?', [id])
         .then(([rows, fields]) => {
             res.json({
                 task: {
@@ -54,62 +50,71 @@ router.get('/:id', async (req, res, next) => {
         .catch(err => {
             console.log(err);
             res.status(500).json({
-                tasks: {
+                task: {
                     error: 'Error getting tasks'
                 }
             })
         });
 });
 
-//Delete
 router.get('/:id/delete', async (req, res, next) => {
     const id = req.params.id;
-    if (isNaN(req.params.id)) {
-        res.status(400).json({
-            task: {
-                error: 'Bad request'
-            }
-        });
-    }
-    await pool.promise()
-        .query("DELETE FROM tasks WHERE id = ?", [id])
-        .then(([rows, fields]) => {
-            res.json({
-                task: {
-                    data: rows
-                }
-            });
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                tasks: {
-                    error: 'Error deleting tasks'
-                }
-            })
-        });
+    res.json(`deleting task ${id}`);
+    // if (isNaN(req.params.id)) {
+    //     res.status(400).json({
+    //         task: {
+    //             error: 'Bad request'
+    //         }
+    //     });
+    // }
 });
 
-//Post
 router.post('/', async (req, res, next) => {
+    // { "task": "koda post" }
     const task = req.body.task;
     await pool.promise()
-        .query("INSERT INTO tasks (task) VALUES (?)", [task])
-        .then((response) => {
-            res.json({
-                task: {
-                    data: response
-                }
-            });
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                tasks: {
-                    error: 'Error creating tasks'
-                }
-            })
+    .query('INSERT INTO tasks (task) VALUES (?)', [task])
+    .then((response) => {
+        res.json({
+            task: {
+                data: response
+            }
         });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            task: {
+                error: 'Error getting tasks'
+            }
+        })
+    });
+    
+    
+    // res.json(req.body);
+
 });
 
+
 module.exports = router;
+
+
+
+/*
+
+    await pool
+    .promise()
+    .query('SELECT * FROM users')
+    .then(([rows, fields]) => {
+        res.json({
+            data: rows,
+        });
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).json({
+            error: 'Database error',
+        });
+    });
+
+    */
